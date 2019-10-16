@@ -13,6 +13,15 @@ var responseDate;
 module.exports = function(){
     var router = express.Router();
 
+    router.post('/login',function(req,res,next){
+        var body = req.body;
+        var name = body.student_name;
+        var id = body.student_no;
+        console.log(id);
+        console.log(name);
+        res.end();
+    });
+
     router.use('/', function(req, res, next){
 
         responseDate = {
