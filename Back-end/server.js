@@ -10,7 +10,11 @@ server.listen(8080);
 
 server.use(bodyParser.urlencoded({}));
 
+// var objMuter = multer({dest:'./upload/'});
+// server.use(objMuter.any());
+
 server.use(express.static('view'));
 
 //登陆验证
-server.use('/', require('./router/identify')());
+server.use('/login', require('./router/identify.js')());
+server.use('/info', require('./router/information.js')());
