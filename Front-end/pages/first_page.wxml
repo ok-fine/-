@@ -1,0 +1,38 @@
+<view class="page">
+    <view class="page__hd">
+        <view class="page__title">湖桃</view>
+        <view class="page__desc">欢迎来到湖桃，这是专为湖南大学学生服务的小程序</view>
+    </view>
+    <view class="page__bd page__bd_spacing">
+      <view class="kind-list">
+        <view wx:if="{{!hasUserInfo && canIUse}}" class="kind-list__item">
+          <navigator url="index/index" class="weui-cell weui-cell_access">
+            <view class="weui-cell__bd">
+            <button open-type="getUserInfo" bindgetuserinfo="getUserInfo">登录</button>
+            </view>
+          </navigator>
+        </view>
+        <view wx:else class="kind-list__item">
+            <navigator url="index/index" class="weui-cell weui-cell_access">
+              <view class="weui-cell__bd">我的</view>
+              <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+            </navigator>
+            <navigator url="index/index" class="weui-cell weui-cell_access">
+              <view class="weui-cell__bd">二手市场</view>
+              <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+            </navigator>
+            <navigator url="index/index" class="weui-cell weui-cell_access">
+              <view class="weui-cell__bd">万能墙</view>
+              <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+            </navigator>
+            <navigator url="index/index" class="weui-cell weui-cell_access">
+              <view class="weui-cell__bd">查寝系统</view>
+              <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+            </navigator>
+        </view>
+      </view>
+    </view>
+    <view class="page__ft">
+        <image src="images/icon_footer.png" style="width: 84px; height: 19px;"></image>
+    </view>
+</view>
