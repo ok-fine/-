@@ -17,4 +17,6 @@ server.use(express.static('view'));
 
 //登陆验证
 server.use('/login', require('./router/identify.js')());
-server.use('/info', require('./router/information.js')());
+server.use('/user_info', require('./router/user_info.js')());
+server.use('/item_info', require('./router/item_info.js')());
+server.use('/index', require('./router/index.js')());

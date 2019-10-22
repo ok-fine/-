@@ -33,12 +33,12 @@ module.exports = function(){
                 //插入
         db.query(`INSERT INTO student_user(student_no, student_name, card_herf) VALUES('${student_no}', '${student_name}', '${card_herf}')`, function(err, data){
             if(err){
-                return db.rollback(function() {
-                  throw err;
-                });
                 responseDate.code = 1;
                 responseDate.message = '数据库1错误';
                 res.json(responseDate);
+                return db.rollback(function() {
+                  throw err;
+                });
             }else{
                 responseDate.num = 0;
                 responseDate.message = '插入数据1成功';
