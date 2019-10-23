@@ -55,7 +55,6 @@ module.exports = function(){
                 responseDate.code = 1;
                 responseDate.message = '数据库1错误';
                 res.json(responseDate);
-
             }else if(data.length == 0){
                 responseDate.code = 2;
                 responseDate.message = '未搜索到商品';   

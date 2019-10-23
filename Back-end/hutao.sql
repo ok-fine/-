@@ -11,7 +11,7 @@
  Target Server Version : 80017
  File Encoding         : 65001
 
- Date: 22/10/2019 22:35:44
+ Date: 23/10/2019 13:20:38
 */
 
 SET NAMES utf8mb4;
@@ -28,7 +28,7 @@ CREATE TABLE `item_info` (
   `description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `price` int(16) NOT NULL DEFAULT '0',
   `publish_time` datetime NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `status` enum('已发布','已卖出','待收货') CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '已发布',
   `try` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`item_no`),
   KEY `item_info_ibfk_1` (`student_no`),
@@ -39,13 +39,36 @@ CREATE TABLE `item_info` (
 -- Records of item_info
 -- ----------------------------
 BEGIN;
-INSERT INTO `item_info` VALUES ('1', '1', '手机', '无', 100000, '2019-10-22 15:48:21', 0, '2019年10月20日 15:48:21');
-INSERT INTO `item_info` VALUES ('2', '2', '衣服', '真好', 100, '2019-10-22 15:48:43', 0, '2019年10月20日 15:48:43');
-INSERT INTO `item_info` VALUES ('3', '2', '2手机', '2的手机', 10000, '2019-10-22 20:21:17', 0, '2019年10月20日 20:21:17');
-INSERT INTO `item_info` VALUES ('4', '3', '3手机', '3的手机', 2000, '2019-10-22 20:21:45', 0, '2019年10月20日 12:23:00');
-INSERT INTO `item_info` VALUES ('5', '1', '1的衣服', '1的衣服啊', 10, '2019-10-22 20:23:13', 0, '2019年10月18日 12:23:00');
-INSERT INTO `item_info` VALUES ('6', '2', '哈哈的摩托车啊', '不知道说什么', 600, '2019-10-22 19:45:18', 0, '2019年09月20日 12:23:00');
-INSERT INTO `item_info` VALUES ('7', '2', '不知道社么衣服', '哈哈哈', 190, '2019-10-22 22:17:56', 0, '2018年09月20日 12:23:00');
+INSERT INTO `item_info` VALUES ('1', '1', '手机', '无', 100000, '2019-10-22 15:48:21', '', '2019年10月20日 15:48:21');
+INSERT INTO `item_info` VALUES ('2', '2', '衣服', '真好', 100, '2019-10-22 15:48:43', '', '2019年10月20日 15:48:43');
+INSERT INTO `item_info` VALUES ('3', '2', '2手机', '2的手机', 10000, '2019-10-22 20:21:17', '', '2019年10月20日 20:21:17');
+INSERT INTO `item_info` VALUES ('4', '3', '3手机', '3的手机', 2000, '2019-10-22 20:21:45', '', '2019年10月20日 12:23:00');
+INSERT INTO `item_info` VALUES ('5', '1', '1的衣服', '1的衣服啊', 10, '2019-10-22 20:23:13', '', '2019年10月18日 12:23:00');
+INSERT INTO `item_info` VALUES ('6', '2', '哈哈的摩托车啊', '不知道说什么', 600, '2019-10-22 19:45:18', '', '2019年09月20日 12:23:00');
+INSERT INTO `item_info` VALUES ('7', '2', '不知道社么衣服', '哈哈哈', 190, '2019-10-22 22:17:56', '', '2018年09月20日 12:23:00');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for item_mes
+-- ----------------------------
+DROP TABLE IF EXISTS `item_mes`;
+CREATE TABLE `item_mes` (
+  `item_no` varchar(16) NOT NULL,
+  `student_no` varchar(16) NOT NULL,
+  `content` varchar(64) DEFAULT NULL,
+  `mes_time` varchar(32) NOT NULL,
+  PRIMARY KEY (`item_no`,`mes_time`,`student_no`) USING BTREE,
+  KEY `student_no` (`student_no`),
+  CONSTRAINT `item_mes_ibfk_1` FOREIGN KEY (`student_no`) REFERENCES `user_info` (`student_no`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `item_mes_ibfk_2` FOREIGN KEY (`item_no`) REFERENCES `item_info` (`item_no`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of item_mes
+-- ----------------------------
+BEGIN;
+INSERT INTO `item_mes` VALUES ('1', '2', '可以少吗', '1571807280185');
+INSERT INTO `item_mes` VALUES ('1', '2', '卖家你好啊', '1571807902881');
 COMMIT;
 
 -- ----------------------------
@@ -102,6 +125,26 @@ CREATE TABLE `user_address` (
   PRIMARY KEY (`student_no`,`address`),
   CONSTRAINT `user_address_ibfk_2` FOREIGN KEY (`student_no`) REFERENCES `user_info` (`student_no`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for user_collect
+-- ----------------------------
+DROP TABLE IF EXISTS `user_collect`;
+CREATE TABLE `user_collect` (
+  `student_no` varchar(16) NOT NULL,
+  `item_no` varchar(16) NOT NULL,
+  PRIMARY KEY (`student_no`,`item_no`) USING BTREE,
+  KEY `item_no` (`item_no`),
+  CONSTRAINT `user_collect_ibfk_1` FOREIGN KEY (`student_no`) REFERENCES `user_info` (`student_no`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user_collect_ibfk_2` FOREIGN KEY (`item_no`) REFERENCES `item_info` (`item_no`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of user_collect
+-- ----------------------------
+BEGIN;
+INSERT INTO `user_collect` VALUES ('2', '1');
+COMMIT;
 
 -- ----------------------------
 -- Table structure for user_info
