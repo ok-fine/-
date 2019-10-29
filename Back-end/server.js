@@ -15,15 +15,13 @@ server.use(bodyParser.urlencoded({}));
 // server.use(objMuter.any());
 
 server.use(express.static('view'));
+server.use(express.static('images'));
 
 server.engine('html', consolidate.ejs);
 server.set('views', 'view');
 server.set('view engine', 'html');
 
 //登陆验证
-server.use('/index', require('./router/index.js')());
-server.use('/login', require('./router/identify.js')());
-server.use('/user_info', require('./router/user_info.js')());
-server.use('/item_info', require('./router/item_info.js')());
-server.use('/chat', require('./router/chat.js')());
-server.use('/order', require('./router/place_order.js')());
+server.use('/login', require('./router/login.js')());
+server.use('/identity', require('./router/identity.js')());
+server.use('/home', require('./router/homepage.js')());

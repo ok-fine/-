@@ -5,22 +5,32 @@
 	<title>商品详情</title>
 </head>
 <body>
-	<p>商品信息：<%=item_info.title%></p>
 	<table width="100%" border="1">
-		<title>留言</title>
 		<tr>
-			<td>content</td>
+			<td colspan="7">详情：<%=item_info.description%></td>
+		</tr>
+		<tr>
+			<td colspan="7">留言</td>
+		</tr>
+		<tr>
+			<td>mes_no</td>
 			<td>item_no</td>
+			<td>parent_no</td>
 			<td>student_no</td>
-			<td>mes_time</td>
+			<td>content</td>
+			<td>publish_time</td>
+			<td>operation</td>
 		</tr>
 		<% for(var i = 0 ; i < item_mes.length; i++){ %>
 			<tr>
-				<td><%=item_mes[i].content%></td>
+				<td><%=item_mes[i].mes_no%></td>
 				<td><%=item_mes[i].item_no%></td>
+				<td><%=item_mes[i].parent_no%></td>
 				<td><%=item_mes[i].student_no%></td>
-				<td><%=item_mes[i].mes_time%></td>
-				<td><a href="?act=del&item_no=<%=item_mes[i].item_no%>&student_no=<%=item_mes[i].student_no%>&mes_time=<%=item_mes[i].mes_time%>">删除</a> </td>
+				<td><%=item_mes[i].content%></td>
+				<td><%=item_mes[i].publish_time%></td>
+				<td><a href="?act=del&item_no=<%=item_mes[i].item_no%>&student_no=<%=item_mes[i].student_no%>&mes_time=<%=item_mes[i].publish_time%>">删除</a>
+				<a href="?act=mes">回复</a></td>
 			</tr>
 		<% } %>
 	</table><br>
@@ -32,7 +42,7 @@
 	<a href="?act=col">collect</a><br>
 
 	<% if(typeof mes != 'undefined'){ %>
-	<form action="/item_info/mes">
+	<form action="/home/trade/item_info/mes">
 		<input type="text" name="message">
 		<input type="submit" name="submit" value="sure">
 	</form>
