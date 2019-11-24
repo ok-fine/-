@@ -1,43 +1,29 @@
-const pathLib = require('path'); //解析文件路径
-const fs = require('fs');
-const AipOcrClient = require("baidu-aip-sdk").ocr;
+const db = require('./query');
+const async = require('async');
 
 module.exports={
 
     //加载留言，返回数组行留言对象
-    load: function (data){
-        var messages = [];
-        var temp = [];
+    load: async function (item_no){
+        var message = {
+            data: {}
+        };
+        var result;
+        var values = [];
 
-        for(let i = 0; i < data.length; i++){
-            var parent_node = data[i].parent_no;
+        var sql = 'SELECT * FROM message WHERE parent_no is null AND item_no=?';      //获取主留言
+        values = [item_no];
+        result = await db.query(sql, values);
+        message.data = result;
 
-            if(data[i].pushed == undefined){
-                if(parent_node != null){
-                    temp.push(data[i]);                                             //push第一个子节点
-                    data[i].pushed = 1;
-
-                    for(let j = i + 1; j < data.length; j++){
-                        if(data[j].mes_no == parent_node){
-                            temp[temp.length - 1].reply_name = data[j].user_name;   //json对象增加回复对象名
-                            if(data[j].parent_no != null){
-                                parent_node = data[j].parent_no;
-                                temp.push(data[j]);
-                                data[j].pushed = 1;
-                            }else{
-                                data[j].child = temp;                               //将根节点对象增加child,child根据发布时间排序
-                                temp = [];
-                                break;
-                            }
-                        }
-                    }
-                }else{
-                    messages.push(data[i]);                                         //将根节点push入结果
-                }
-            }
+        sql = 'SELECT * FROM message WHERE parent_no=? AND item_no=?';                //获取子留言
+        for(let i = 0; i < message.data.length; i++){
+            values = [message.data[i].mes_no, item_no];
+            result = await db.query(sql, values);
+            message.data[i].child = result;                                             //添加子留言
         }
 
-        return messages;
+        return message;
     }
 
 }

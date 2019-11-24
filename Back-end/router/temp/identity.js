@@ -1,21 +1,29 @@
 const express = require('express');
+const mysql = require('mysql');
 const fs = require('fs');     //文件重命名
 const pathLib = require('path');
 const formidable = require('formidable');
 const check = require('../model/check_face');
 
+var db = mysql.createPool({
+    host: '132.232.81.249',
+    user: 'wjy',
+    password: 'wjy666',
+    database: 'hutao'
+});
+
 var responseData;
 
 module.exports = function(){
-    var router = express.Router();
-    var fileDir = pathLib.join(__dirname,'../images/student_card');
-    var fileDirP = pathLib.join(__dirname,'../images/portrait');
+    var router = express.Router(); 
+    var fileDir = pathLib.join(__dirname,'../images/student_card');    //face文件
+    // var p_fileDir = pathLib.join(__dirname,'../images/portrait');      //头像文件
 
     router.use('/', function(req, res, next){
 
         responseData = {
-            code: '',
-            message: ''
+            code: 0,
+            message: '',
         }
 
         next();
@@ -23,21 +31,16 @@ module.exports = function(){
 
     router.post('/', function(req, res){
         var form = new formidable.IncomingForm();
-        // var session_no = req.body.session_no;
-        form.uploadDir = fileDir;
-        form.keepExtensions = true;
+        form.uploadDir =fileDir;
+        form.keepExtensions =true;
         form.parse(req, function(err, fields, files){
             // console.log(files);
             var student_no = fields['student_no'];
             var student_name = fields['student_name'];
             var user_name = fields['user_name'];
             var is_exit = fields['is_exit'];
-            var session_no = fields['session_no'];
-            var portrait_href = fields['portrait_href'];
 
-            console.log(portrait_href);
-
-            var card_href = '/home/ubuntu/hutao/Back-end/images/student_card/' + student_no + '_1.JPG';
+            var card_href = "/home/ubuntu/湖桃/Back-end/images/student_card/" + student_no + "_1.JPG";
 
             var face_href = pathLib.parse(files.face_href.path).dir + '\/' +  fields['student_no'] 
                                         + '_2.JPG';
@@ -46,21 +49,20 @@ module.exports = function(){
             // console.log(card_href);
             // console.log(face_href);
 
-
             fs.rename(files.face_href.path, face_href, function(err){
                 if(err){
-                    responseData.code = '0007';
-                    responseData.message = '用户活体照片上传失败';
+                    responseData.code = 6;
+                    responseData.message = '上传失败';
                     res.json(responseData);
                     throw err;
                 }
                 else{
-                    responseData.code = '0008';
-                    responseData.message = '用户活体照片上传成功';
+                    responseData.code = 0;
+                    responseData.message = '上传成功';
                     console.log(responseData);
 
                     //异步处理图像识别
-                    responseData = check.check_face(res, is_exit, card_href, face_href, student_no, student_name, user_name, session_no, portrait_href);
+                    responseData = check.check_face(res, is_exit, card_href, face_href, student_no, student_name, user_name);
                     // res.json(responseData);
                 }
             })
@@ -81,8 +83,8 @@ module.exports = function(){
         var student_no = "2017110325";
         var student_name = "魏洁杨";
         var user_name = "取不";
-        var card_href = "/Users/weijieyang/hutao/Back-end/router/zzy.jpg";
-        var face_href = "/Users/weijieyang/hutao/Back-end/router/1.jpg";
+        var card_href = "/Users/weijieyang/湖桃/Back-end/router/zzy.jpg";
+        var face_href = "/Users/weijieyang/湖桃/Back-end/router/1.jpg";
 
         // res.json(responseData);
 

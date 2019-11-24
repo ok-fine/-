@@ -1,13 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const async = require('async');
-
-var db = mysql.createPool({
-    host: '132.232.81.249',
-    user: 'wjy',
-    password: 'wjy666',
-    database: 'hutao'
-});
+const db = require('../../model/query');
 
 var responseData;
 
@@ -18,85 +12,88 @@ module.exports = function(){
     router.use('/', function(req, res, next){
 
         responseData = {
-            code: 0,
-            message: '',
+            code: '',
+            message: ''
         }
 
         next();
     });
 
-    router.get('/', function(req, res){
+    //http://localhost:8080/home/trade/index?key=&price=1&campus=全部校区&credit=2&start=5
+    router.get('/', async function(req, res){
        // console.log('进入筛选'); 
-        var pagenum = 5;
+        var pagenum = 8;
         var key = req.query.key;
         var price = req.query.price;
         var campus = req.query.campus;
+        var credit = req.query.credit;
+        var start = eval(req.query.start);
+        var end = start + eval(pagenum);
+        // var end = eval(start + pagenum);
+        // console.log(end);
 
-        var start = req.query.start;
-        var end = eval(start + pagenum);
+        var values = [];
+        var sql = 'SELECT * FROM published_item WHERE title LIKE \'%' + key + '%\' ';
 
-        var sql = 'SELECT seller_no, seller_name, seller_credit, item_no, title, price, campus FROM published_item WHERE title LIKE \'%' + key + '%\' ';
-
-        if(campus != "无所谓"){
-            sql += 'AND campus=\'' + campus + '\' ';
+        if(campus != "全部校区"){
+            sql += 'AND campus=?';
+            values.push(campus);
         }
 
-        if(price == "价格高"){
-            //降序
-            sql += 'ORDER BY price DESC ';
-        }else if(price == "价格低"){
-            //升序
-            sql += 'ORDER BY price ';
+        console.log('price:' + price);
+        console.log('credit:' + credit);
+
+        if(price != '0' || credit != '0'){
+            sql += 'ORDER BY ';
         }
 
-        sql += 'LIMIT ' + start + ',' + end;
+        //price排序：0-无所谓，1-价格高/降序，2-价格低/升序
+        if(price == '1'){
+            sql += 'price DESC ';
+        }else if(price == '2'){
+            sql += 'price ';
+        }
+
+        if(price != '0' && credit != '0'){
+            sql += ', ';
+        }
+
+        //信誉值排序：0-无所谓，1-价格高/降序，2-价格低/升序
+        if(credit == '1'){
+            sql += 'seller_credit DESC ';
+        }else if(credit == '2'){
+            sql += 'seller_credit ';
+        }
+
+        sql += 'LIMIT ?, ?';
+        values.push(start, end);
 
         console.log(sql);
-        db.query(sql, (err, data) => {
-            if(err){
-                console.log(err);
-                responseData.code = 1;
-                responseData.message = '数据库1错误';
-                res.json(responseData);
-            }else if(data.length == 0){
-                responseData.code = 2;
-                responseData.message = '未搜索到商品';   
-                res.json(responseData);
-            }else{
-                responseData.num = 0;
-                responseData.message = '查看数据成功';
-                responseData.data = data;
-                // console.log(data[0]);
+        console.log(values);
+        responseData.data = await db.query(sql, values);
 
-                // //返回json中加上用户名信息
-                // //此处要处理好异步的情况，等所有的处理完了再返回json
-                // for(var i = 0 ; i < data.length ; i++){
-                //     var temp_data = data[i];
-                //     var temp_no = data[i].student_no;
-                //     db.query(`SELECT user_name FROM user_info WHERE student_no='${temp_no}' `, (err, name) => {
-                //         // console.log(temp_no + "asd");
-                //         if(err){
-                //             responseDate.code = 1;
-                //             responseDate.message = '数据库1错误';
-                //             res.json(responseDate);
-                //         }else{
-                //             responseDate.num = 0;
-                //             responseDate.message = '查看数据2成功';
-                //             temp_data.user_name = name[0].user_name;
+        if(responseData.data.length == 0){
+            responseData.code = '0014';
+            responseData.message = '暂无任何商品信息';
+            res.json(responseData);
+        }else{
+            //加载商品图片
+            for(var j = 0 ; j < responseData.data.length; j++){
+                var img_count = responseData.data[j].img_count;
+                var images =  new Array(img_count);
 
-                //             //返回用户名，适配json，用中间值传
-                //             responseDate.data[i] = temp_data;
-
-                //             if(i == data.length - 1){
-                //                 console.log(i);
-                                res.json(responseData);
-                //             }
-                //         }
-                //     });
-                // }
+                for(var i = 1 ; i <= img_count ; i++){
+                    images[i-1] = 'http://132.232.81.249:81/images/item/'+ responseData.data[j].seller_no + '/' + responseData.data[j].item_no + '_' + i + '.JPG';
+                }
+                responseData.data[j].images = {
+                    swiperImg: images
+                }
             }
-        });
 
+            responseData.code = '0015';
+            responseData.message = '加载商品信息成功';
+            res.json(responseData);
+        }
     });
 
 

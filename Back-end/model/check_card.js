@@ -11,8 +11,8 @@ var client = new AipOcrClient(APP_ID, API_KEY, SECRET_KEY);
 
 //返回的数据结果
 var responseData = {
-    code: 0,
-    message: '',
+    code: '',
+    message: ''
 }
 
 module.exports={
@@ -20,10 +20,10 @@ module.exports={
 	check_card: function(res, check_no, check_name, card_href){
 		// 带参数调用通用文字识别（高精度版）
         var options = {};
-        options["detect_direction"] = "true";
-        options["probability"] = "true";
+        options['detect_direction'] = 'true';
+        options['probability'] = 'true';
 
-        client.accurateBasic(fs.readFileSync(card_href).toString("base64"), options).then(function(result) {
+        client.accurateBasic(fs.readFileSync(card_href).toString('base64'), options).then(function(result) {
             console.log(JSON.stringify(result));
 
             var is_student = 0; //判断学生证信息和输入信息是否匹配
@@ -37,11 +37,11 @@ module.exports={
             }
 
             if(is_student == 2){
-                responseData.code = 0;
-                responseData.message = '匹配成功';
+                responseData.code = '0072';
+                responseData.message = '用户学生证匹配成功';
             }else{
-                responseData.code = 4;
-                responseData.message = '匹配不成功，学号或姓名错误';
+                responseData.code = '0073';
+                responseData.message = '用户学生证匹配失败，学号或姓名错误';
             }
 
             console.log(responseData);
@@ -51,7 +51,7 @@ module.exports={
         }).catch(function(err) {
             // 如果发生网络错误
             console.log(err);
-            responseData.code = 1;
+            responseData.code = '0001';
             responseData.message = '网络错误';
 
             console.log(responseData);
