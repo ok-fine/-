@@ -1,3 +1,4 @@
+
 const pathLib = require('path'); //解析文件路径
 const fs = require('fs');
 const AipOcrClient = require("baidu-aip-sdk").ocr;

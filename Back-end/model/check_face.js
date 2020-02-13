@@ -39,7 +39,7 @@ module.exports={
                     console.log('<match>: ' + JSON.stringify(result));
 
                     //人脸匹配
-                    if(result.result.score > 75){
+                    if(result.result.score > 60){
                         //验证成功,删除照片
                         fs.unlinkSync(face_href);
                         

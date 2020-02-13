@@ -40,8 +40,8 @@ module.exports = function(){
     router.get('/', function(req, res){
         var wechat_code = req.query.code;
         var APP_URL = 'https://api.weixin.qq.com/sns/jscode2session';
-        var APP_ID = 'wxff0708c2fb00de45';   //小程序的app id ，在公众开发者后台可以看到
-        var APP_SECRET = 'ef4b7faf887d28fd5165998e9ffc5739';  //程序的app secrect，在公众开发者后台可以看到
+        var APP_ID = 'wx782ad455ff9b7900';   //小程序的app id ，在公众开发者后台可以看到
+        var APP_SECRET = '966fe60310de43d1c3cf10c06d738f35';  //程序的app secrect，在公众开发者后台可以看到
         if(!!wechat_code)
         {
             request(`${APP_URL}?appid=${APP_ID}&secret=${APP_SECRET}&js_code=${wechat_code}&grant_type=authorization_code`, async function(error, response, body){
@@ -97,7 +97,7 @@ module.exports = function(){
             var check_no = '学号:' + student_no;
 
             //先存储为临时照片，命名为学号
-            var card_href = pathLib.parse(files.card_href.path).dir + '\/' + fields['student_no'] + '_1.JPG';
+            var card_href = pathLib.parse(files.card_href.path).dir + '\/' + student_no + '_1.JPG';
             //检查用户是否存在
             db2.query(`SELECT * FROM student_user WHERE student_no='${student_no}'`, function(err, data){
                 if(data.length != 0){
@@ -112,9 +112,14 @@ module.exports = function(){
                             responseData.code = '0006';
                             responseData.message = '用户学生证图片上传成功';
                             console.log(responseData);
-                            check.check_card(res, check_no, check_name, card_href);
+                            // check.check_card(res, check_no, check_name, card_href);
                         }
                     })
+
+                    var img_path = '/home/ubuntu/hutao/Back-end/images/student_card/'+ student_no + '_1.JPG';
+                    console.log(img_path);
+                   // fs.unlinkSync(img_path);
+
                     responseData.code = '0004';
                     responseData.message = '用户已存在,请使用已绑定的微信号登陆';
                     res.json(responseData);

@@ -22,8 +22,7 @@ module.exports = function(){
         var student_no = req.query.student_no;
 
         var values = [student_no];
-        var sql = 'SELECT user_name, sex, birthday, major, credit, portrait_href\
-                    FROM user_info WHERE student_no=?';
+        var sql = 'SELECT user_name, sex, birthday, major, credit, portrait_href FROM user_info WHERE student_no=?';
         var result = await db.query(sql, values);
 
         responseData.data = result;
@@ -36,9 +35,9 @@ module.exports = function(){
     router.get('/collect', async function(req, res){
         var student_no = req.query.student_no;
         
-        var sql = 'SELECT title, item_no, price, seller_no, seller_name, seller_credit,\
-                    seller_portrait FROM collect_item WHERE collector_no=?';
         var values = [student_no];
+        var sql = 'SELECT title, item_no, price, seller_no, seller_name, seller_credit, seller_portrait \
+                    FROM collect_item WHERE collector_no=?';
         var result = await db.query(sql, values);
 
         responseData.data = result;
@@ -52,8 +51,7 @@ module.exports = function(){
             //获取商品图片
             var images = '';
             for(var i = 0 ; i < responseData.data.length ; i++){
-                images = 'http://132.232.81.249:81/images/item/'+ responseData.data[i].seller_no
-                           + '/' + responseData.data[i].item_no + '_1.JPG';
+                images = 'http://132.232.81.249:81/images/item/'+ responseData.data[i].seller_no + '/' + responseData.data[i].item_no + '_1.JPG';
                 responseData.data[i].images = {
                     swiperImg: images
                 }

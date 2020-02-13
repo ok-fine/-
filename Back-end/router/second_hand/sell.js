@@ -144,7 +144,14 @@ module.exports = function(){
         for(var i = 1 ; i <= count[0].img_count ; i++){
             var img_path = '/home/ubuntu/hutao/Back-end/images/item/'+ student_no + '/' + item_no + '_' + i + '.JPG';
             console.log(img_path);
-            fs.unlinkSync(img_path);
+	    fs.exists(img_path, function(exists){
+		if(exists){
+		    fs.unlinkSync(img_path);
+		}else{
+		    console.log('图片不存在');
+		}
+	    });
+           // fs.unlinkSync(img_path);
         }
 
         //删除商品详情

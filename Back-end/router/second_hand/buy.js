@@ -10,8 +10,8 @@ module.exports = function(){
 
     router.use('/', function(req, res, next){
 
-        var responseData = {
-            code: 0,
+        responseData = {
+            code: '0000',
             message: '',
         }
 
@@ -145,12 +145,13 @@ module.exports = function(){
     });
 
     //付款
-    router.use('pay', function(req, res){
+    router.use('pay', async function(req, res){
+        console.log("pay");
         var item_no = req.query.item_no;
 
         var sql = 'UPDATE item_info SET status=\'待收货\' WHERE item_no=?';
         var values = [item_no];
-        db.querys(sql, values);
+        await db.querys(sql, values);
 
         responseData.code = '0068';
         responseData.message = '商品付款成功';

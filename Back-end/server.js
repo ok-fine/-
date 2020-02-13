@@ -1,4 +1,5 @@
-var responseData;const express = require('express');
+var responseData;
+const express = require('express');
 const bodyParser = require('body-parser');
 const static = require('express-static');
 const consolidate=require('consolidate');
@@ -8,7 +9,10 @@ const pathLib = require('path'); //解析文件路径
 const db = require('./model/query');
 
 var server = express();
-server.listen(8080);
+// server.listen(8089);
+server.listen(8089, function listening() {
+    console.log('try');
+});
 
 server.use(bodyParser.urlencoded({}));
 
@@ -22,15 +26,15 @@ server.engine('html', consolidate.ejs);
 server.set('views', 'view');
 server.set('view engine', 'html');
 
-// server.get('/try', function (req, res) {
-//     var h = "1 2 3 4 5 6";
-//     var a = h.split(" ");
-//     console.log(a[0]);
-// })
+server.get('/try', function (req, res) {
+    var h = "1 2 3 4 5 6";
+    var a = h.split(" ");
+    console.log(a[0]);
+})
 
-// server.get('/tt', function (req, res) {
-//     console.log("try");
-// })
+server.get('/tt', function (req, res) {
+    console.log("try");
+})
 
 //登陆验证
 server.use('/login', require('./router/login.js')());
